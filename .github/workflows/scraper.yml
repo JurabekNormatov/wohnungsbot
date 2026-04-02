@@ -1,0 +1,30 @@
+name: Wohnungsbot
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Pakete installieren
+        run: pip install -r requirements.txt
+
+      - name: Bot ausführen
+        env:
+          BERLIN_BOT_TOKEN: ${{ secrets.BERLIN_BOT_TOKEN }}
+          BERLIN_CHAT_ID: ${{ secrets.BERLIN_CHAT_ID }}
+          HAMBURG_BOT_TOKEN: ${{ secrets.HAMBURG_BOT_TOKEN }}
+          HAMBURG_CHAT_ID: ${{ secrets.HAMBURG_CHAT_ID }}
+        run: python3 main.py
