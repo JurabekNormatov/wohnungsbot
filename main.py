@@ -5,6 +5,7 @@ from scrapers.wbm import WbmScraper
 from scrapers.degewo import DegewoScraper
 from scrapers.vonovia import VonoviaScraper
 from scrapers.vonovia import VonoviaScraper, VonoviaBerlinScraper
+from scrapers.kleinanzeigen_hamburg import KleinanzeigenHamburgScraper
 
 
 def run():
@@ -14,6 +15,7 @@ def run():
         DegewoScraper(),
         VonoviaBerlinScraper(),
         VonoviaScraper(),
+        KleinanzeigenHamburgScraper(),
     ]
 
     for scraper in scrapers:

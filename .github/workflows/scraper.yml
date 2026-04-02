@@ -13,6 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache seen.db
+        uses: actions/cache@v4
+        with:
+          path: seen.db
+          key: seen-db
+
       - name: Python einrichten
         uses: actions/setup-python@v5
         with:
