@@ -1,54 +1,102 @@
-# Wohnungsbot
+# 🏠 Wohnungsbot Berlin & Hamburg
 
-A Telegram bot that scrapes apartment listings from Berlin and Hamburg housing companies and posts new listings to Telegram channels automatically.
+Ein automatischer Telegram-Bot der Berliner und Hamburger Wohnungsportale durchsucht und neue Angebote sofort per Nachricht versendet — bevor sie auf großen Portalen erscheinen.
 
-## What it does
+## 📊 Ergebnisse
 
-- Scrapes WBM, DEGEWO, and Vonovia (Berlin) every 15 minutes
-- Scrapes Vonovia (Hamburg) every 15 minutes
-- Filters listings by price, size, and number of rooms
-- Posts new listings to separate Telegram channels for Berlin and Hamburg
-- Prevents duplicate posts using SQLite
+- 40+ aktive Nutzer im Telegram-Kanal (Berlin)
+- Eine Nutzerin fand nach 3 Jahren erfolgloser Suche innerhalb von einer Woche eine Wohnung — 1-Zimmer-Wohnung in Berlin für 360 €/Monat über eine Wohnungsgenossenschaft
 
-## Tech Stack
+## 🎯 Problem
+
+Günstige Wohnungen bei Berliner Wohnungsgenossenschaften (WBM, Degewo, Vonovia) sind innerhalb von Stunden vergeben. Wer nicht sofort reagiert, hat keine Chance. Manuelle Kontrolle mehrerer Portale täglich ist zeitaufwendig und fehleranfällig.
+
+## 💡 Lösung
+
+Der Bot scraped automatisch mehrere Portale, filtert nach definierten Kriterien und sendet neue Angebote sofort in einen Telegram-Kanal — in Echtzeit, bevor die meisten Nutzer überhaupt von der Wohnung wissen.
+
+## 🔧 Tech Stack
 
 - Python 3.13
-- BeautifulSoup4 — HTML parsing
-- Requests — HTTP calls
-- SQLite — duplicate tracking
-- Telegram Bot API — notifications
-- GitHub Actions — automated scheduling
+- BeautifulSoup4 — HTML-Parsing der Wohnungsportale
+- Requests — HTTP-Scraping mit Anti-Bot-Headers
+- SQLite — Duplikat-Erkennung (bereits gesehene Angebote)
+- Telegram Bot API — Nachrichtenversand via requests
+- dotenv — sichere Konfiguration über Umgebungsvariablen
+- GitHub Actions — automatischer Betrieb alle 15 Minuten
 
-## Setup
-
-1. Clone the repository
-2. Create a virtual environment and install dependencies:
-```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
+## 🏗️ Architektur
 ```
-3. Copy `.env.example` to `.env` and fill in your tokens:
-```bash
-   cp .env.example .env
+wohnungsbot/
+├── main.py              # Hauptprogramm — orchestriert alle Scraper
+├── bot.py               # Telegram-Versand für Berlin und Hamburg
+├── db.py                # SQLite — Duplikat-Erkennung
+├── filter.py            # Filterlogik (Preis, Zimmer, Größe)
+├── config.py            # Konfiguration
+├── scrapers/
+│   ├── base.py          # Basis-Scraper mit HTTP-Client
+│   ├── wbm.py           # WBM Berlin
+│   ├── degewo.py        # Degewo Berlin
+│   ├── vonovia.py       # Vonovia Berlin & Hamburg
+│   ├── howoge.py        # HOWOGE Berlin (in Entwicklung)
+│   └── kleinanzeigen_hamburg.py  # Kleinanzeigen Hamburg
+└── .env.example         # Konfigurationsvorlage
 ```
-4. Run manually:
-```bash
-   python3 main.py
+
+## ⚙️ Features
+
+- 5 Scraper — WBM, Degewo, Vonovia, HOWOGE, Kleinanzeigen Hamburg
+- Duplikat-Schutz — SQLite-Datenbank verhindert doppelte Benachrichtigungen
+- Intelligenter Filter — konfigurierbar nach Warmmiete, Zimmeranzahl, Größe pro Stadt
+- Zwei Kanäle — Berlin und Hamburg werden separat beliefert
+- Robustes Fehlerhandling — einzelne Scraper-Fehler stoppen nicht den gesamten Lauf
+- Anti-Bot-Headers — realistischer Browser-User-Agent
+- GitHub Actions — läuft automatisch alle 15 Minuten ohne eigenen Server
+
+## 🔍 Filterbeispiel
+```python
+FILTERS = {
+    "berlin": {
+        "max_warmmiete": 1200,
+        "min_zimmer": 1,
+        "max_zimmer": 4,
+        "min_groesse": 30,
+    },
+    "hamburg": {
+        "max_warmmiete": 1300,
+        "min_zimmer": 1,
+        "max_zimmer": 4,
+        "min_groesse": 30,
+    },
+}
 ```
 
-## Automated runs
+## 🚀 Installation
+```bash
+git clone https://github.com/JurabekNormatov/wohnungsbot
+cd wohnungsbot
+pip install -r requirements.txt
+cp .env.example .env
+# .env mit eigenen Telegram-Tokens befüllen
+python main.py
+```
 
-The bot runs automatically every 15 minutes via GitHub Actions.
-Tokens are stored as GitHub Secrets — never in the code.
+## 🔐 Konfiguration (.env)
+```env
+BERLIN_BOT_TOKEN=dein_token
+BERLIN_CHAT_ID=deine_chat_id
+HAMBURG_BOT_TOKEN=dein_token
+HAMBURG_CHAT_ID=deine_chat_id
+```
 
-## Sources
+## 📈 Geplante Erweiterungen
 
-| City | Source |
-|------|--------|
-| Berlin | WBM, DEGEWO, Vonovia |
-| Hamburg | Vonovia |
+- [x] GitHub Actions — automatischer Betrieb alle 15 Minuten ✓
+- [ ] Weitere Portale: Gewobag, Saga Hamburg
+- [ ] Web-Interface zur Filterkonfiguration
+- [ ] Statistiken: Angebote pro Tag, durchschnittliche Preise
 
-## Author
+## 👨‍💻 Entwickler
 
-Jurabek Normatov
+Jurabek Normatov — Junior Java/Python Developer
+github.com/JurabekNormatov
