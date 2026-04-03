@@ -13,12 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache seen.db
-        uses: actions/cache@v4
-        with:
-          path: seen.db
-          key: seen-db
-
       - name: Python einrichten
         uses: actions/setup-python@v5
         with:
@@ -34,3 +28,11 @@ jobs:
           HAMBURG_BOT_TOKEN: ${{ secrets.HAMBURG_BOT_TOKEN }}
           HAMBURG_CHAT_ID: ${{ secrets.HAMBURG_CHAT_ID }}
         run: python3 main.py
+
+      - name: seen.db speichern
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add seen.db
+          git diff --staged --quiet || git commit -m "Update seen.db"
+          git push
