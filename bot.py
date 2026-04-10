@@ -17,14 +17,25 @@ def _send(token: str, chat_id: str, text: str):
     resp = requests.post(url, json=payload, timeout=10)
     if not resp.ok:
         print(f"[FEHLER] {resp.status_code}: {resp.text}")
+    time.sleep(3)
 
-    time.sleep(1)
-    
+
 def _format(listing: dict) -> str:
-    lines = [
-        f"🏠 <b>{listing.get('title', 'Neue Wohnung')}</b>",
-        f"📍 {listing.get('address', 'Adresse unbekannt')}",
-    ]
+    title = listing.get("title", "Neue Wohnung")
+
+    if "Student" in title or "Studier" in title:
+        kat_label = "🎓 Studentenwohnung"
+    elif "Azubi" in title or "Ausbildung" in title:
+        kat_label = "🔧 Azubiwohnung"
+    elif "Senior" in title:
+        kat_label = "👴 Seniorenwohnung"
+    else:
+        kat_label = None
+
+    lines = [f"🏠 <b>{title}</b>"]
+    if kat_label:
+        lines.append(f"🏷️ {kat_label}")
+    lines.append(f"📍 {listing.get('address', 'Adresse unbekannt')}")
     if listing.get("rooms"):
         lines.append(f"🚪 Zimmer: {listing['rooms']}")
     if listing.get("size"):
@@ -33,7 +44,10 @@ def _format(listing: dict) -> str:
         lines.append(f"💶 Warmmiete: {listing['warmmiete']}")
     if listing.get("kaltmiete"):
         lines.append(f"💶 Kaltmiete: {listing['kaltmiete']}")
-    lines.append(f"🔗 <a href=\"{listing['url']}\">Zur Anzeige → {listing.get('source', '')}</a>")
+    if listing.get("verfuegbar"):
+        lines.append(f"📅 Verfügbar ab: {listing['verfuegbar']}")
+    lines.append(f"🏢 Quelle: {listing.get('source', '')}")
+    lines.append(f"🔗 <a href=\"{listing['url']}\">Zur Anzeige →</a>")
     return "\n".join(lines)
 
 

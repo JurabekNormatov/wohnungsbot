@@ -3,9 +3,9 @@ from filter import passes_filter
 from bot import send_berlin, send_hamburg
 from scrapers.wbm import WbmScraper
 from scrapers.degewo import DegewoScraper
-from scrapers.vonovia import VonoviaScraper
 from scrapers.vonovia import VonoviaScraper, VonoviaBerlinScraper
 from scrapers.kleinanzeigen_hamburg import KleinanzeigenHamburgScraper
+from scrapers.berlinovo import BerlinovoScraper
 
 
 def run():
@@ -14,6 +14,7 @@ def run():
         WbmScraper(),
         DegewoScraper(),
         VonoviaBerlinScraper(),
+        BerlinovoScraper(),
         VonoviaScraper(),
         KleinanzeigenHamburgScraper(),
     ]
