@@ -22,22 +22,18 @@ class WbmScraper(BaseScraper):
                 uid = card.get("data-uid", "")
 
                 # Titel
-                title_tag = card.select_one("b")
+                title_tag = card.select_one("h2.imageTitle")
                 title = title_tag.get_text(strip=True) if title_tag else ""
 
-                # URL
+                # URL — direkt aus der Karte
                 link_tag = card.select_one("a[href*='/wohnungen-berlin/']")
                 if not link_tag:
                     continue
                 url = BASE_URL + link_tag.get("href", "")
 
                 # Adresse
-                tooltip = card.select_one(f"div[id*='{uid}']")
-                if tooltip:
-                    lines = [t.strip() for t in tooltip.get_text().splitlines() if t.strip()]
-                    address = " ".join(lines[1:3]) if len(lines) >= 3 else ""
-                else:
-                    address = ""
+                address_tag = card.select_one("div.address")
+                address = address_tag.get_text(strip=True) if address_tag else ""
 
                 # Miete, Zimmer, Größe
                 rent_tag  = card.select_one("div.main-property-value.main-property-rent")
